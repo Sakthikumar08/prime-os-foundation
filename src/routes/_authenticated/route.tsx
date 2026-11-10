@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_authenticated")({
     }
     return { user: session.user };
   },
-  // pendingComponent: ShellSkeleton,
+  pendingComponent: ShellSkeleton,
   errorComponent: RouteError,
   component: () => (
     <AppShell>
