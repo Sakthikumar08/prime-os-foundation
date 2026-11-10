@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "PRIME OS",
+  "short_name": "PRIME",
+  "description": "Your private cockpit for habits, money, tasks and long-term goals.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e0f0c",
+  "theme_color": "#0e0f0c",
+  "categories": ["productivity", "lifestyle", "finance"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
