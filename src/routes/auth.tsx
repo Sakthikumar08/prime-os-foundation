@@ -4,9 +4,10 @@ import { SignInPage } from "@/features/auth/sign-in-page";
 import { parseAuthReason, type AuthReason } from "@/features/auth/session";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { reason?: AuthReason } => ({
-    reason: parseAuthReason(search.reason),
-  }),
+  validateSearch: (search: Record<string, unknown>): { reason?: AuthReason } => {
+    const reason = parseAuthReason(search["reason"]);
+    return reason ? { reason } : {};
+  },
   head: () => ({
     meta: [
       { title: "Sign in · PRIME OS" },
@@ -23,5 +24,5 @@ export const Route = createFileRoute("/auth")({
 
 function AuthRoute() {
   const { reason } = Route.useSearch();
-  return <SignInPage reason={reason} />;
+  return reason ? <SignInPage reason={reason} /> : <SignInPage />;
 }

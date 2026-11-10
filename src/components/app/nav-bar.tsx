@@ -120,7 +120,7 @@ function RailLink({
   return (
     <Link
       to={to}
-      activeOptions={{ exact }}
+      activeOptions={{ exact: exact ?? false }}
       className="flex h-12 flex-col items-center justify-center gap-0.5 rounded-control text-[11px] font-medium text-muted-foreground transition-colors duration-200 hover:bg-secondary hover:text-foreground data-[status=active]:bg-primary/12 data-[status=active]:text-accent-ink lg:flex-row lg:justify-start lg:gap-3 lg:px-3 lg:text-sm"
     >
       <Icon className="size-5 shrink-0" strokeWidth={1.75} aria-hidden />
