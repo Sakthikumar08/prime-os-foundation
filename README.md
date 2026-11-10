@@ -1,63 +1,85 @@
-# PRIME OS Foundation
+# PRIME OS — Phase 1A (Foundation)
 
-Build PHASE 1A (Foundation) of a premium, mobile-first personal life management app called PRIME OS. Build ONLY this phase. Do not build habits, money, tasks or any later module yet.
+A private, mobile-first cockpit for habits, money, tasks and long-term goals.
+Phase 1A ships the foundation only: design system, navigation shell, sign-in,
+settings, and installable/offline app support. Habits, money, tasks and the
+other modules are placeholders that say "Coming in the next phase".
 
-PRODUCT: PRIME OS is one private app to manage daily habits, finances, tasks and long-term goals. It must feel like a performance cockpit for one disciplined person, NOT a generic admin dashboard and NOT a default template. Single private user for now, but structure everything so it can support many independent users later.
+## Stack
 
-BRAND AND DESIGN SYSTEM
-- Name: PRIME OS. Personality: disciplined, confident, premium, calm.
-- Dark Mode is the DEFAULT. Light Mode also supported. Near-black dark background, slightly lifted card surfaces, ONE signature accent colour (electric lime or amber, pick one and use it sparingly), muted grey secondary text. Success green and alert red only for meaning.
-- Typography: one display font for headings and large numerals (tabular numerals for scores and money), one clean sans for body.
-- Rounded cards (20px radius), 1px subtle borders, simple line icons from a single icon set. Soft glow only on a hero card.
-- Motion: short transitions (150-250ms) only. No looping animations. Respect prefers-reduced-motion.
-- Touch targets at least 44px. WCAG AA contrast in both themes. Visible focus rings.
-- Forms open as bottom sheets on mobile. Layout is mobile-first (design at 360px width), with a side navigation rail on tablet and desktop.
+- TanStack Start (React 19 + TypeScript strict) on Vite 7, Tailwind CSS v4
+- Lovable Cloud for authentication (email + password, magic link)
+- `vite-plugin-pwa` (Workbox `generateSW`) for the installable, offline app shell
+- Vitest + Testing Library for tests
 
-THEME
-- Theme toggle lives in Settings. The chosen theme is saved in local storage now (and will be stored in the database for the signed-in user later). It must persist after refresh and after closing and reopening the app. Avoid any flash of the wrong theme on load.
+## Project layout
 
-NAVIGATION SHELL
-- Bottom navigation with five items: Home, Daily, Money, Tasks, More. A floating quick-add button above the nav (opens a bottom sheet with three placeholder actions: Habit, Expense, Task, marked as coming in the next phase).
-- Pages for this phase: Home, Daily, Money, Tasks as polished placeholder screens that each show a proper EMPTY STATE (icon, short message, disabled primary action labelled 'Coming in the next phase'). Never show invented numbers or fake statistics anywhere.
-- More page: list of modules as polished 'Coming Soon' cards: Goals, Fitness, Nutrition, Cricket, Career, Communication, Grooming, Creativity, Travel, plus Settings (functional).
-- Settings page (functional in this phase): theme toggle (Dark/Light), profile name field (saved locally for now), currency shown as INR with the rupee symbol (default), date format dropdown (DD/MM/YYYY default), timezone shown as Asia/Kolkata, sign out button.
+```text
+src/
+  routes/                 file-based routes (/, /daily, /money, /tasks, /more, /settings, /auth)
+    _authenticated/       everything here requires a signed-in user
+  features/               one folder per feature (auth, home, daily, money, tasks, more, settings)
+  components/app/         shared app components (NavBar, BottomSheet, EmptyState, ProgressRing ...)
+  components/ui/          base UI primitives (Button, Card, Input, Skeleton ...)
+  lib/format.ts           INR money + Asia/Kolkata date formatting
+  lib/pwa/register-sw.ts  the only place the service worker is registered
+  styles.css              design tokens (colours, radii, spacing) for dark and light themes
+```
 
-AUTHENTICATION
-- Use Supabase authentication (email and password, plus optional magic link). Create a clean Sign-in page: centred card, logo, email, password, 'Send magic link' option, theme-aware, with clear error messages for wrong password, expired session and network errors.
-- Public sign-up must be DISABLED. Only an invited or manually created user can sign in. If someone tries to sign up, show a polite message that PRIME OS is private.
-- Protect all app routes: a signed-out user is redirected to Sign-in. Handle session refresh and sign-out.
-- Never expose any service-role key in frontend code. Use only the public anon key.
+## Environment variables
 
-PWA
-- Make it an installable Progressive Web App for Android home-screen install: web app manifest (name PRIME OS, short name PRIME, dark theme colour, standalone display), maskable and standard icons (simple lime 'P' mark on near-black), and a service worker (for example vite-plugin-pwa) so the app shell loads instantly and works offline.
-- Show a subtle Offline indicator when the connection is lost.
+These are filled in automatically by Lovable Cloud in `.env`. Only public values are used
+in the browser — no service-role key is ever shipped to the frontend.
 
-ENGINEERING RULES
-- React + TypeScript (strict) + Vite + Tailwind CSS. Reusable components (Button, Card, BottomSheet, Input, EmptyState, Skeleton, Toast, ProgressRing, PageHeader, NavBar).
-- Organise code by feature folders (features/home, features/daily, features/money, features/tasks, features/settings, features/auth) with shared components and a single design-tokens file for colours, radii and spacing.
-- Every page must have: a loading skeleton, a friendly empty state, and a readable error state with Retry.
-- Dates use Asia/Kolkata. Money formatting uses Indian numbering with the rupee symbol (for example Rs 1,23,456.00 shown with the rupee sign).
-- Add a README covering setup, environment variables, running, and deployment.
+| Name | Purpose |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Backend URL used by the browser client |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Public (anon) key for the browser client |
+| `VITE_SUPABASE_PROJECT_ID` | Backend project id |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_PROJECT_ID` | Same values for server-side code |
 
-WHEN DONE, summarise what you built and list anything that needs me to do manually (for example connecting Supabase, creating the first user, disabling public sign-ups, and connecting GitHub). Do not start later phases.
+When running outside Lovable, copy these into a local `.env` file.
 
-This project was built with [Lovable](https://lovable.dev).
+## Creating the first user
 
-## Build with Lovable
+Public sign-up is disabled — PRIME OS is invite-only. To create your account:
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/e61b1605-42f6-4985-af79-fa2becfaa9bf).
+1. In Lovable, open **Cloud → Users**.
+2. Click **Add user → Create new user**, enter your email and a password.
+3. Open the app and sign in with that email and password (or request a magic link).
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Choosing **Send invitation** instead emails a sign-in link; that account has no password,
+so use magic links to sign in afterwards.
 
-## Development
+If you publish to a custom domain, add that address to the allowed redirect URLs in the
+Cloud sign-in settings so magic links return to the right place.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Running locally
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+npm install        # or: bun install
+npm run dev        # http://localhost:8080
+npm test           # run the test suite once
 ```
+
+## Deploying
+
+- Click **Publish** in Lovable. The published app is what you install on Android
+  (Chrome menu → **Add to Home screen** / **Install app**).
+- Offline support only works on the published app. The service worker is deliberately
+  never registered in development, in the Lovable editor preview, or inside an iframe.
+  Add `?sw=off` to any URL to remove it from a device.
+- Connecting GitHub is optional and done from the Lovable project settings.
+
+## Conventions
+
+- Dark theme is the default; the chosen theme is saved in local storage and applied
+  before first paint (no flash). A later phase will also store it per user in the database.
+- All dates use Asia/Kolkata; the default date format is DD/MM/YYYY.
+- Money uses Indian Rupees with Indian digit grouping, e.g. ₹1,23,456.00.
+- No invented numbers or fake statistics anywhere — empty states until real data exists.
+
+## Built with Lovable
+
+Continue developing in the
+[Lovable editor](https://lovable.dev/projects/e61b1605-42f6-4985-af79-fa2becfaa9bf).
